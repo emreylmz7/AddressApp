@@ -1,0 +1,78 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-upload me-2"></i>Bulk Import Addresses
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="onClose()"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        @if (errorMessage()) {
+          <div class="alert alert-warning d-flex align-items-start" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+            <div style="white-space: pre-line;">{{ errorMessage() }}</div>
+          </div>
+        }
+
+        <div class="alert alert-info d-flex" role="alert">
+          <i class="bi bi-info-circle-fill me-3 mt-1"></i>
+          <div>
+            <strong class="d-block mb-2">Import Format</strong>
+            <p class="mb-2">Paste addresses in the following format (one per line):</p>
+            <code class="d-block bg-light p-2 rounded border text-wrap" style="font-size: 0.85rem;">
+              Region, City, Branch Info: Street Address, Phone, Working Hours
+            </code>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="addressesText" class="form-label fw-semibold">
+            Addresses <span class="text-danger">*</span>
+          </label>
+          <textarea
+            id="addressesText"
+            class="form-control font-monospace"
+            rows="12"
+            [value]="addressesText()"
+            (input)="onTextChange($event)"
+            placeholder="Paste addresses here..."
+            style="font-size: 0.9rem;"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onClose()"
+          [disabled]="submitting()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="onSubmit()"
+          [disabled]="submitting() || !addressesText()"
+        >
+          @if (submitting()) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Importing...
+          } @else {
+            <i class="bi bi-upload me-2"></i>
+            Import
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" (click)="onClose()"></div>

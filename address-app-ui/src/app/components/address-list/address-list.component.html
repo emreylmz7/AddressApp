@@ -1,0 +1,196 @@
+<div class="container-fluid py-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <h1 class="h3 mb-0">Address Management</h1>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-primary" (click)="openBulkImportModal()">
+            <i class="bi bi-upload me-2"></i>Bulk Import
+          </button>
+          <button class="btn btn-primary" (click)="openAddModal()">
+            <i class="bi bi-plus-lg me-2"></i>Add Address
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="input-group">
+        <span class="input-group-text bg-white">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by city, region, street, or branch..."
+          [value]="searchTerm()"
+          (input)="onSearch($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading addresses...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-3"></i>
+      <div class="flex-grow-1">{{ error() }}</div>
+      <button class="btn btn-sm btn-outline-danger" (click)="loadAddresses()">
+        <i class="bi bi-arrow-clockwise me-1"></i>Retry
+      </button>
+    </div>
+  }
+
+  @if (!loading() && !error()) {
+    @if (filteredAddresses().length === 0) {
+      <div class="text-center py-5">
+        <i class="bi bi-geo-alt display-1 text-muted"></i>
+        <h2 class="h4 mt-3">No addresses found</h2>
+        <p class="text-muted">Start by adding a new address or use bulk import.</p>
+      </div>
+    } @else {
+      <div class="d-none d-lg-block">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle bg-white">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" style="width: 100px;">Branch</th>
+                <th scope="col">Address</th>
+                <th scope="col" style="width: 200px;">Working Hours</th>
+                <th scope="col" style="width: 150px;">Phone</th>
+                <th scope="col" style="width: 100px;" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (address of filteredAddresses(); track address.id) {
+                <tr>
+                  <td class="fw-bold text-primary">Branch {{ address.id }}</td>
+                  <td>
+                    <div class="fw-semibold">{{ address.city }}, {{ address.streetAddress }}</div>
+                    <small class="text-muted">{{ address.branchInfo }}</small>
+                  </td>
+                  <td>
+                    <small class="text-muted d-block">{{ address.workingHours }}</small>
+                  </td>
+                  <td>
+                    <a [href]="'tel:' + address.phone" class="text-decoration-none">
+                      {{ address.phone }}
+                    </a>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <button
+                        class="btn btn-outline-primary"
+                        (click)="openEditModal(address)"
+                        title="Edit"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        class="btn btn-outline-danger"
+                        (click)="deleteAddress(address.id)"
+                        title="Delete"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="d-lg-none">
+        <div class="row g-3">
+          @for (address of filteredAddresses(); track address.id) {
+            <div class="col-12">
+              <div class="card address-card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0 text-primary">
+                      Branch {{ address.id }}
+                    </h5>
+                    <div class="btn-group btn-group-sm">
+                      <button
+                        class="btn btn-outline-primary"
+                        (click)="openEditModal(address)"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        class="btn btn-outline-danger"
+                        (click)="deleteAddress(address.id)"
+                      >
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-2">
+                    <strong>{{ address.city }}</strong>
+                  </div>
+                  
+                  <p class="card-text mb-2">
+                    <i class="bi bi-geo-alt me-2"></i>{{ address.streetAddress }}
+                  </p>
+                  
+                  <p class="card-text text-muted mb-2">
+                    <small>{{ address.branchInfo }}</small>
+                  </p>
+                  
+                  <p class="card-text mb-2">
+                    <i class="bi bi-clock me-2"></i>
+                    <small>{{ address.workingHours }}</small>
+                  </p>
+                  
+                  <p class="card-text mb-0">
+                    <i class="bi bi-telephone me-2"></i>
+                    <a [href]="'tel:' + address.phone" class="text-decoration-none">
+                      {{ address.phone }}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>
+
+@if (showAddModal()) {
+  <app-address-form
+    [mode]="'create'"
+    (close)="closeAddModal()"
+    (success)="onAddSuccess()"
+  ></app-address-form>
+}
+
+@if (showEditModal() && selectedAddress()) {
+  <app-address-form
+    [mode]="'edit'"
+    [address]="selectedAddress()!"
+    (close)="closeEditModal()"
+    (success)="onEditSuccess()"
+  ></app-address-form>
+}
+
+@if (showBulkImportModal()) {
+  <app-bulk-import
+    (close)="closeBulkImportModal()"
+    (success)="onBulkImportSuccess()"
+  ></app-bulk-import>
+}

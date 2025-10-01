@@ -1,0 +1,167 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ mode === 'create' ? 'Add New Address' : 'Edit Address' }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="onClose()"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          @if (errorMessage()) {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <div>{{ errorMessage() }}</div>
+            </div>
+          }
+
+          <div class="mb-3">
+            <label for="region" class="form-label">
+              Region <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="region"
+              formControlName="region"
+              [class.is-invalid]="isFieldInvalid('region')"
+              placeholder="Enter region"
+            />
+            @if (isFieldInvalid('region')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('region') }}
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">
+              City <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="city"
+              formControlName="city"
+              [class.is-invalid]="isFieldInvalid('city')"
+              placeholder="Enter city"
+            />
+            @if (isFieldInvalid('city')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('city') }}
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="branchInfo" class="form-label">
+              Branch Info <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="branchInfo"
+              formControlName="branchInfo"
+              [class.is-invalid]="isFieldInvalid('branchInfo')"
+              placeholder="Enter branch information"
+            />
+            @if (isFieldInvalid('branchInfo')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('branchInfo') }}
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="streetAddress" class="form-label">
+              Street Address <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="streetAddress"
+              formControlName="streetAddress"
+              [class.is-invalid]="isFieldInvalid('streetAddress')"
+              placeholder="Enter street address"
+            />
+            @if (isFieldInvalid('streetAddress')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('streetAddress') }}
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label">
+              Phone <span class="text-danger">*</span>
+            </label>
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              formControlName="phone"
+              [class.is-invalid]="isFieldInvalid('phone')"
+              placeholder="+380974805040"
+            />
+            @if (isFieldInvalid('phone')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('phone') }}
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="workingHours" class="form-label">
+              Working Hours <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="workingHours"
+              formControlName="workingHours"
+              [class.is-invalid]="isFieldInvalid('workingHours')"
+              placeholder="Mon-Fri 08:00-18:00, Sat-Sun 10:00-14:00"
+            />
+            @if (isFieldInvalid('workingHours')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('workingHours') }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onClose()"
+            [disabled]="submitting()"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="submitting() || addressForm.invalid"
+          >
+            @if (submitting()) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Saving...
+            } @else {
+              <i class="bi bi-check-lg me-2"></i>
+              {{ mode === 'create' ? 'Create' : 'Update' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" (click)="onClose()"></div>
